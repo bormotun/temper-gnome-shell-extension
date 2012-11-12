@@ -7,25 +7,28 @@ const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 
-let text, button;
+let text, button,infoText;
 
-function _hideHello() {
+function _hideValues() {
     Main.uiGroup.remove_actor(text);
     text = null;
 }
 
-function _showHello() {
 
-    refr();
-   
-   
-    let [res, pid, in_fd, out_fd, err_fd] = GLib.spawn_async_with_pipes(null, ["date"], null, GLib.SpawnFlags.SEARCH_PATH, null);
+function _getValue(cmd){
+    let [res, pid, in_fd, out_fd, err_fd] = GLib.spawn_async_with_pipes(null, cmd, null, GLib.SpawnFlags.SEARCH_PATH, null);
     out_reader = new Gio.DataInputStream({ base_stream: new Gio.UnixInputStream({fd: out_fd}) });
+    let [out, size] = out_reader.read_line(null); 
+    return String(out)+"\u00B0\C";
+}
+
+function _showValues(){
+    let outStr="inner: "+_getValue( ["pcsensor_inner","-c"])+"\r\nouther-a: "+_getValue( ["pcsensor_outher_a","-c"])+"\r\nouther-b: "+_getValue( ["pcsensor_outher_b","-c"]);
    
-    let [out, size] = out_reader.read_line(null);  
-   
-   if (!text) {
-        text = new St.Label({ style_class: 'helloworld-label', text:String(out)});
+    Main.uiGroup.remove_actor(infoText);
+    
+    if (!text) {
+        text = new St.Label({ style_class: 'helloworld-label', text:outStr});
         Main.uiGroup.add_actor(text);
     }
 
@@ -37,40 +40,33 @@ function _showHello() {
                       Math.floor(monitor.height / 2 - text.height / 2));
 
     Tweener.addTween(text,
-                     { opacity: 0,
-                       time: 2,
-                       transition: 'easeOutQuad',
-                       onComplete: _hideHello });
+                     { opacity: 255,
+                       time: 10,
+                       transition: 'easeOutCubic',
+                       onComplete: _hideValues });
 }
 
-
-function refr(){
-   
-    let [res, pid, in_fd, out_fd, err_fd] = 
-        GLib.spawn_async_with_pipes(null, ["date"], null, GLib.SpawnFlags.SEARCH_PATH, null);
-    out_reader = new Gio.DataInputStream({ base_stream: new Gio.UnixInputStream({fd: out_fd}) });
-   
-    let [out, size] = out_reader.read_line(null);  
+function _showInfoText(){
+    if(!infoText){
+        infoText = new St.Label({ style_class: 'helloworld-label', text:"Loading..."});
+    }
     
-    let label =    new St.Label({ style_class: 'panel-label',
-                          text:String(out)});	
-	
+    Main.uiGroup.add_actor(infoText);
 
-    
+    infoText.opacity = 255;
 
-    
-    
-   // let icon = new St.Icon({ icon_name: 'system-run',
-   //                          icon_type: St.IconType.SYMBOLIC,
-   //                          style_class: 'system-status-icon' });
+    let monitor = Main.layoutManager.primaryMonitor;
 
-  //  button.set_child(icon);
-    button.set_child(label);
-    
-    Mainloop.timeout_add_seconds(10, Lang.bind(this, function() {
-                this.refr();
-            }));
+    infoText.set_position(Math.floor(monitor.width / 2 - infoText.width / 2),
+                      Math.floor(monitor.height / 2 - infoText.height / 2));
 
+    Tweener.addTween(infoText,
+                     { opacity: 255,
+                       time: 20,
+                       transition: 'easeOutQuad',
+                       onComplete: function(){
+			 Main.uiGroup.remove_actor(infoText);
+		      }});
 }
 
 function init() {
@@ -80,9 +76,12 @@ function init() {
                           x_fill: true,
                           y_fill: false,
                           track_hover: true });
-          button.connect('button-press-event', _showHello); 
-      refr();
+      let icon = new St.Icon({ icon_name: 'system-run',
+                             style_class: 'system-status-icon' });
 
+      button.set_child(icon);
+      button.connect('button-press-event', _showInfoText); 
+      button.connect('button-release-event', _showValues); 
 }
 
 
