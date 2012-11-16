@@ -1,8 +1,3 @@
-/* Thanx a lot for Juan Carlos Perez! 
- * Dear customer, Please see dir pcsensor-1.0.1 for source and license
-*/
-
-
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 const St = imports.gi.St;
