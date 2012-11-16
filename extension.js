@@ -5,6 +5,7 @@ const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const PanelMenu = imports.ui.panelMenu;
 
 
 let text, button;
@@ -20,26 +21,11 @@ function _getValue(cmd){
     return String(out);
 }
 
-function _showValues(){
+function _showValues(button){
     let outStr=_getValue().trim();
-    
-    if (!text) {
-        text = new St.Label({ style_class: 'helloworld-label', text:outStr});
-        Main.uiGroup.add_actor(text);
-    }
-
-    text.opacity = 255;
-
-    let monitor = Main.layoutManager.primaryMonitor;
-
-    text.set_position(Math.floor(monitor.width / 2 - text.width / 2),
-                      Math.floor(monitor.height / 2 - text.height / 2));
-
-    Tweener.addTween(text,
-                     { opacity: 0,
-                       time: 10,
-                       transition: 'easeOutCubic',
-                       onComplete: _hideValues });
+    let label =    new St.Label({ style_class: 'panel-label',text:outStr}); 
+    button.set_child(label);
+    Mainloop.timeout_add_seconds(60, Lang.bind(this, function() {this._showValues(button);}));
 }
 
 
@@ -50,11 +36,8 @@ function init() {
                           x_fill: true,
                           y_fill: false,
                           track_hover: true });
-      let icon = new St.Icon({ icon_name: 'system-run',
-                             style_class: 'system-status-icon' });
-
-      button.set_child(icon);
-      button.connect('button-release-event', _showValues); 
+      
+      _showValues(button);
 }
 
 
