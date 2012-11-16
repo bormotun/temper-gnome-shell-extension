@@ -23,7 +23,7 @@ exit 1
 fi
 
 
-RESULT=$INNER"C° "$OUTA"C° "$OUTB"C°"
+RESULT=$INNER"°C "$OUTA"°C "$OUTB"°C"
 
 echo >$LOG
 echo $RESULT>$LOG
