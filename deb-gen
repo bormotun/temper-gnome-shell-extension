@@ -1,0 +1,43 @@
+#!/bin/sh
+rm -R deb
+mkdir deb
+cd deb
+mkdir DEBIAN
+mkdir -p usr/bin
+mkdir -p etc/cron.d
+mkdir -p etc/udev/rules.d
+mkdir -p usr/share/gnome-shell/extensions/temper-gnome-shell-extention@rt75.com
+
+cp ../system/pcsensor_inner usr/bin/
+cp ../system/pcsensor_outher_a usr/bin/
+cp ../system/pcsensor_outher_b usr/bin/
+cp ../system/temper.sh usr/bin
+
+chmod -R 755 ./
+
+cp ../system/cron.d/temper etc/cron.d
+chmod 644 etc/cron.d/*
+
+cp ../system/99-tempsensor.rules etc/udev/rules.d
+chmod 644 etc/udev/rules.d/*
+
+
+cp  ../extension.js usr/share/gnome-shell/extensions/temper-gnome-shell-extention@rt75.com
+cp  ../metadata.json usr/share/gnome-shell/extensions/temper-gnome-shell-extention@rt75.com
+cp  ../stylesheet.css usr/share/gnome-shell/extensions/temper-gnome-shell-extention@rt75.com
+
+chmod -R 644 usr/share/gnome-shell/extensions/temper-gnome-shell-extention@rt75.com/*
+
+echo "Package:temper-gnome-shell-extension" > DEBIAN/control
+echo "Version:1.0-1" >> DEBIAN/control
+echo "Maintainer:bormotun rt@rt75.com" >> DEBIAN/control
+echo "Architecture:i386" >> DEBIAN/control
+echo "Section:gnome" >> DEBIAN/control
+echo "Description:todo" >> DEBIAN/control
+
+
+cd ../
+
+fakeroot dpkg-deb --build deb
+lintian deb.deb
+mv deb.deb temper-gnome-shell-extension.1.0-1.i386.deb

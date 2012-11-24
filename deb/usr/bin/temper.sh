@@ -1,0 +1,29 @@
+#!/bin/sh
+
+LOG=/var/log/temper
+PATH=/usr/bin
+
+
+INNER=`pcsensor_inner -c`
+if [ "$?" -ne 0 ]
+then
+exit 1
+fi
+
+OUTA=`pcsensor_outher_a -c`
+if [ "$?" -ne 0 ]
+then
+exit 1
+fi
+
+OUTB=`pcsensor_outher_b -c`
+if [ "$?" -ne 0 ]
+then
+exit 1
+fi
+
+
+RESULT=$INNER"°C "$OUTA"°C "$OUTB"°C"
+
+echo >$LOG
+echo $RESULT>$LOG
