@@ -5,7 +5,7 @@ cd deb
 mkdir DEBIAN
 mkdir -p usr/bin
 mkdir -p etc/cron.d
-mkdir -p etc/udev/rules.d
+mkdir -p lib/udev/rules.d
 mkdir -p usr/share/gnome-shell/extensions/temper-gnome-shell-extention@rt75.com
 
 cp ../system/pcsensor_inner usr/bin/
@@ -18,8 +18,8 @@ chmod -R 755 ./
 cp ../system/cron.d/temper etc/cron.d
 chmod 644 etc/cron.d/*
 
-cp ../system/99-tempsensor.rules etc/udev/rules.d
-chmod 644 etc/udev/rules.d/*
+cp ../system/99-tempsensor.rules  lib/udev/rules.d
+chmod 644  lib/udev/rules.d/*
 
 
 cp  ../extension.js usr/share/gnome-shell/extensions/temper-gnome-shell-extention@rt75.com
@@ -35,6 +35,9 @@ echo "Architecture:i386" >> DEBIAN/control
 echo "Section:gnome" >> DEBIAN/control
 echo "Description:todo" >> DEBIAN/control
 
+echo "/etc/cron.d/temper" >> DEBIAN/conffiles
+
+chmod 644 DEBIAN/*
 
 cd ../
 
