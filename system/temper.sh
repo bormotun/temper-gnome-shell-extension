@@ -1,7 +1,7 @@
 #!/bin/sh
 
 LOG=/var/log/temper
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/usr/bin
 
 
 INNER=`pcsensor_inner -c`

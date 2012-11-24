@@ -5,8 +5,9 @@
 # that none of the other crontabs do.
 
 SHELL=/bin/sh
+PATH=/usr/bin
 
 
 # m h dom mon dow user	command
-*/1 *	* * *	root   /home/bormotun/temper.sh
+*/1 *	* * *	root   temper.sh
 #
