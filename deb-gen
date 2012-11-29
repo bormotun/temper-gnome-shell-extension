@@ -1,7 +1,6 @@
 #!/bin/sh
 rm -R deb
-#mkdir deb
-mkdir debbbb
+mkdir deb
 cd deb
 mkdir DEBIAN
 mkdir -p usr/bin
